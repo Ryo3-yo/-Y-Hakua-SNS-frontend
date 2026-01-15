@@ -1,0 +1,164 @@
+.notificationContainer {
+    display: flex;
+    width: 100%;
+}
+
+.notificationRight {
+    flex: 9.5;
+    background-color: #f0f2f5;
+    min-height: calc(100vh - 50px);
+}
+
+.notificationWrapper {
+    padding: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.notificationHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.notificationTitle {
+    margin-bottom: 0;
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+}
+
+.rankingLinkButton {
+    display: flex;
+    align-items: center;
+    background-color: #1877f2;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+.rankingLinkButton:hover {
+    background-color: #166fe5;
+}
+
+.rankingIcon {
+    margin-right: 5px;
+    font-size: 20px !important;
+}
+
+.dark-theme .rankingLinkButton {
+    background-color: #1da1f2;
+}
+
+.dark-theme .rankingLinkButton:hover {
+    background-color: #1a91da;
+}
+
+.notificationList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0px 0px 16px -8px rgba(0, 0, 0, 0.68);
+}
+
+.notificationItem {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background-color 0.2s;
+}
+
+.notificationItem:last-child {
+    border-bottom: none;
+}
+
+.notificationItem:hover {
+    background-color: #f9f9f9;
+}
+
+.notificationItem.unread {
+    background-color: #eff6ff;
+    /* 薄い青 */
+}
+
+.notificationImg {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 15px;
+}
+
+.notificationInfo {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.notificationText {
+    font-size: 16px;
+}
+
+.notificationUsername {
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.notificationTime {
+    font-size: 12px;
+    color: #888;
+    margin-top: 5px;
+}
+
+.notificationPostImg {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    margin-left: 10px;
+    border-radius: 5px;
+}
+
+.noNotifications {
+    color: #888;
+    font-size: 18px;
+    display: block;
+    text-align: center;
+    margin-top: 50px;
+}
+
+/* Dark Theme support (assuming .dark-theme class on body) */
+.dark-theme .notificationRight {
+    background-color: #15202b;
+}
+
+.dark-theme .notificationList {
+    background-color: #192734;
+    box-shadow: none;
+    border: 1px solid #38444d;
+}
+
+.dark-theme .notificationItem {
+    border-bottom: 1px solid #38444d;
+    background-color: #192734;
+    color: white;
+}
+
+.dark-theme .notificationItem:hover {
+    background-color: #253341;
+}
+
+.dark-theme .notificationItem.unread {
+    background-color: #1c2938;
+    /* Slightly lighter dark blue */
+}
+
+.dark-theme .notificationTitle {
+    color: white;
+}

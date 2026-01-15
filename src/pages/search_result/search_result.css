@@ -1,0 +1,56 @@
+.seachResultContainer {
+    display: flex;
+    width: 100%;
+}
+
+.sidebar {
+    flex: 2.5;
+    position: sticky;
+    top: 50px;
+  /* 必要に応じて z-index を調整 */
+    z-index: 99;
+}
+
+
+.SearchResultRightConteiner {
+    flex: 9.5;
+    display: flex;
+}
+
+.searchResultSpace {
+    flex: 6;
+}
+
+.searchResultSpace {
+    padding: 20px;
+}
+
+@media screen and (min-width:471px){
+    .bottombar {
+        display: none;       
+    }
+}
+
+.bottombar {
+    position: sticky;
+    bottom: 0;
+}
+
+
+
+.border-b_py-2{
+    list-style: none;
+}
+
+/* Dark Theme Styles */
+.dark-theme h3 {
+  color: #f5f5f5;
+  border-bottom: 1px solid #38444d;
+  padding-bottom: 5px;
+}
+
+.dark-theme .text-gray-500 {
+  color: #8899a6; /* Lighter gray for dark mode */
+}
+
+
