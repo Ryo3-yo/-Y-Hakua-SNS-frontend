@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react'
+import React, { useEffect, useState, useContext, useCallback } from 'react'
 import './timeline.css'
 import Share from '../share/share'
 import Post from '../post/post'
@@ -17,7 +17,7 @@ export default function Timeline({ username }) {
   const [hasMore, setHasMore] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
-  const fetchPosts = async (pageNum = 1, isRefresh = false) => {
+  const fetchPosts = useCallback(async (pageNum = 1, isRefresh = false) => {
     try {
       if (pageNum === 1) setIsRefreshing(true);
       else setIsLoadingMore(true);
@@ -42,7 +42,7 @@ export default function Timeline({ username }) {
       if (pageNum === 1) setTimeout(() => setIsRefreshing(false), 500);
       else setIsLoadingMore(false);
     }
-  }
+  }, [username]);
 
   // Handle scroll for infinite loading
   useEffect(() => {
@@ -63,9 +63,9 @@ export default function Timeline({ username }) {
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [hasMore, isLoadingMore, isRefreshing, username]);
+  }, [hasMore, isLoadingMore, isRefreshing, fetchPosts]);
 
-  const handleClassroomSync = async (isAuto = false) => {
+  const handleClassroomSync = useCallback(async (isAuto = false) => {
     try {
       const token = localStorage.getItem('token');
       if (!token) {
@@ -109,7 +109,7 @@ export default function Timeline({ username }) {
     } finally {
       setIsSyncing(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchPosts();
@@ -117,7 +117,7 @@ export default function Timeline({ username }) {
     if (!username) {
       handleClassroomSync(true);
     }
-  }, [username, user?._id]);
+  }, [username, fetchPosts, handleClassroomSync]);
 
   const handleRefresh = () => {
     fetchPosts(1, true);

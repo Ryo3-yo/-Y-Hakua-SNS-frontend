@@ -54,7 +54,7 @@ export const SocketContextProvider = ({ children }) => {
                 socket.current = null;
             }
         }
-    }, [user?._id]); // user全体ではなく _id の変更をトリガーにする
+    }, [user]); // user全体ではなく _id の変更をトリガーにする
 
     // 2. イベントリスナーの設定
     useEffect(() => {
@@ -84,7 +84,6 @@ export const SocketContextProvider = ({ children }) => {
     }, [user?._id]); // Socket接続が確立された後にリスナーを設定する 
 
     // 他のコンポーネントから未読数をリセットするための関数
-    const resetUnreadMessages = () => setUnreadMessages(0); // 簡易的
     const resetUnreadNotifications = () => setUnreadNotifications(0);
 
     // 正確な値を再取得する関数

@@ -98,17 +98,13 @@
 //   )
 // }
 
-import React, { useContext, useRef } from 'react'
+import React from 'react'
 import "./login.css";
-import { loginCall } from '../../ActionCalls';
-import { AuthContext } from '../../state/AuthContext';
 import GoogleIcon from '@mui/icons-material/Google';
-import { useNavigate } from 'react-router-dom';
-import { Button, Container, Typography } from '@mui/material';
+import { Button } from '@mui/material';
 
 
 export default function Login() {
-  const navigate = useNavigate();
   const PUBLIC_FOLDER = process.env.REACT_APP_PUBLIC_FOLDER || "/assets/";
 
   const handleGoogleLogin = () => {

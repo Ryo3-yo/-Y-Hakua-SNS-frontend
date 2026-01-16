@@ -5,7 +5,7 @@ import Conversation from "../../components/conversations/Conversation";
 import Message from "../../components/message/Message";
 import ChatHeader from "../../components/chatHeader/ChatHeader";
 import Bottombar from "../../components/bottombar/bottombar";
-import { Refresh, AttachFile, Cancel, Image, ArrowBack } from "@mui/icons-material";
+import { Refresh, AttachFile, Cancel, ArrowBack } from "@mui/icons-material";
 
 import { useContext, useEffect, useState, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
@@ -101,9 +101,6 @@ export default function Messenger() {
         text: data.text,
         conversationId: data.conversationId,
         createdAt: data.createdAt,
-        text: data.text,
-        conversationId: data.conversationId,
-        createdAt: data.createdAt,
         read: false,
         attachments: data.attachments || [],
       });
@@ -138,13 +135,6 @@ export default function Messenger() {
     // クリーンアップはSocketContextが行うので、ここではリスナー解除のみ行うのが理想だが
     // 複雑になるため、コンポーネントアンマウント時の明示的な解除は省略（再接続時に上書きされる挙動に依存）
     // 本来は .off するべき
-    return () => {
-      socket.off("getMessage");
-      socket.off("messageRead");
-      socket.off("userTyping");
-      socket.off("userStopTyping");
-
-    };
   }, [socket, currentChat, user]); // socketとcurrentChatに依存
 
   // メッセージ受信時の処理
@@ -178,7 +168,7 @@ export default function Messenger() {
       // 会話リストを更新（最新のメッセージを表示するため）
       updateConversationList(arrivalMessage);
     }
-  }, [arrivalMessage, currentChat, socket]); // socket追加
+  }, [arrivalMessage, currentChat, socket, user._id, refreshUnreadMessages]); // socket追加
 
   // 会話リストの並び替え・更新
   const updateConversationList = (message) => {
@@ -515,13 +505,6 @@ export default function Messenger() {
                 <>
                   <div className="chatBoxHeader">
                     {/* 現在の会話相手の情報を表示 */}
-                    {(() => {
-                      const friendId = currentChat.members.find(m => m !== user._id);
-                      // Conversationsから情報を探すか、APIで取得した情報を使う（ここでは簡易的にConversationコンポーネント内と同様の取得はせず、Conversationをクリックした時にデータが揃うようにするのが理想）
-                      // 一旦、Conversation内でのデータ取得を再利用するか、ここで再度取得する
-                      // 暫定的に、Conversationリストの中から見つける
-                      // 実際には Conversation.jsx をラップして情報を抽出するか、currentPartner stateを持たせるのが良い
-                    })()}
                     <ChatHeader conversation={currentChat} currentUser={user} PF={PF} />
                   </div>
                   <div className="chatBoxRefresh">
@@ -609,7 +592,7 @@ export default function Messenger() {
           </div>
 
         </div>
-      </div>
+      </div >
       <div className="bottombar">
         <Bottombar />
       </div>

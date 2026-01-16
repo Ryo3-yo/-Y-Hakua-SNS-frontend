@@ -28,7 +28,6 @@ import Register from './pages/register/register';
 import Profile from './pages/profile/profile';
 import SearchResults from './pages/search_result/search_result';
 import AuthCallback from './pages/AuthCallback';
-import PrivateRoute from './components/PrivateRoute';
 import Setting from './pages/setting/setting';
 import Messenger from './pages/messenger/Messenger'; // Import Messenger component
 import Notification from './pages/notification/notification';
@@ -46,15 +45,15 @@ axios.defaults.baseURL = process.env.REACT_APP_API_URL || "";
 axios.defaults.withCredentials = true;
 
 
+const themeColors = {
+  light: "#ffffff",
+  dark: "#15202b",
+};
+
 function App() {
   const { user, dispatch } = useContext(AuthContext);
 
   const needsPrivacyAgreement = user && !user.hasAgreedToPrivacyPolicy;
-
-  const themeColors = {
-    light: "#ffffff",
-    dark: "#15202b",
-  };
 
   useEffect(() => {
     const fetchUser = async () => {
