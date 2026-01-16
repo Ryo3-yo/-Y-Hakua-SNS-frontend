@@ -30,12 +30,7 @@ export default function Topbar({ onSearch, initialValue = '' }) {
         <div className='topbarContainer'>
             <div className='topbarLeft'>
                 <Link to='/' style={{ textDecoration: 'none', color: 'inherit' }}>
-                    <span className='logo'>
-                        Y
-                    </span>
-                    <span className='sublogo'>
-                        HakuaSNS
-                    </span>
+                    <img src={PUBLIC_FOLDER + "logo.png"} alt="Logo" className="logoImg" />
                 </Link>
             </div>
             <div className="topbarCenter">

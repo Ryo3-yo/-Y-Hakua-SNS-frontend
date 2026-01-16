@@ -38,6 +38,13 @@
   letter-spacing: -2px;
 }
 
+.loginLogoImg {
+  height: 250px;
+  width: auto;
+  margin-bottom: 20px;
+  object-fit: contain;
+}
+
 .loginDesc {
   font-size: 24px;
   color: white;

@@ -19,7 +19,8 @@ export const SocketContextProvider = ({ children }) => {
                 socket.current.disconnect();
             }
 
-            socket.current = io("ws://localhost:8800");
+            const socketUrl = (process.env.REACT_APP_API_URL || "http://localhost:8800").replace(/^http/, 'ws');
+            socket.current = io(socketUrl);
             socket.current.emit("addUser", user._id);
 
             // 初期未読メッセージ数の取得

@@ -507,3 +507,18 @@
 .dark-theme .chatFileLabel:hover {
   background-color: #253341;
 }
+
+.chatLoadingOlder {
+  text-align: center;
+  padding: 10px;
+  font-size: 13px;
+  color: #65676b;
+  background-color: rgba(0, 0, 0, 0.02);
+  margin-bottom: 10px;
+  border-radius: 10px;
+}
+
+.dark-theme .chatLoadingOlder {
+  color: #8899a6;
+  background-color: rgba(255, 255, 255, 0.05);
+}

@@ -32,6 +32,12 @@ export default function Messenger() {
   const { socket, refreshUnreadMessages } = useContext(SocketContext); // Global socket
   const { user } = useContext(AuthContext);
   const scrollRef = useRef();
+  const chatBoxTopRef = useRef(); // Ref for the scrollable container
+
+  const [msgPage, setMsgPage] = useState(1);
+  const [hasMoreMsgs, setHasMoreMsgs] = useState(true);
+  const [isLoadingOlder, setIsLoadingOlder] = useState(false);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   const PF = process.env.REACT_APP_PUBLIC_FOLDER;
 
@@ -224,8 +230,12 @@ export default function Messenger() {
     const getMessages = async () => {
       try {
         if (currentChat) {
-          const res = await axios.get("/api/messages/" + currentChat._id);
-          setMessages(res.data);
+          setIsInitialLoad(true);
+          setMsgPage(1);
+          setHasMoreMsgs(true);
+          const res = await axios.get("/api/messages/" + currentChat._id + "?page=1&limit=20");
+          setMessages(res.data.reverse()); // 最新20件を時系列に並べ替え
+          setHasMoreMsgs(res.data.length === 20);
 
           // 未読を一括既読にする
           if (currentChat.myUnreadCount > 0) {
@@ -242,17 +252,60 @@ export default function Messenger() {
         }
       } catch (err) {
         console.log(err);
+      } finally {
+        setTimeout(() => setIsInitialLoad(false), 100);
       }
     };
     getMessages();
   }, [currentChat]);
 
+  const loadOlderMessages = async () => {
+    if (!hasMoreMsgs || isLoadingOlder || !currentChat) return;
+    try {
+      setIsLoadingOlder(true);
+      const nextPage = msgPage + 1;
+      const res = await axios.get(`/api/messages/${currentChat._id}?page=${nextPage}&limit=20`);
+
+      if (res.data.length > 0) {
+        const olderMessages = res.data.reverse();
+        // スクロール位置を維持するための準備
+        const container = chatBoxTopRef.current;
+        const prevScrollHeight = container.scrollHeight;
+
+        setMessages((prev) => [...olderMessages, ...prev]);
+        setMsgPage(nextPage);
+        setHasMoreMsgs(res.data.length === 20);
+
+        // メッセージ追加後にスクロール位置を調整
+        setTimeout(() => {
+          if (container) {
+            container.scrollTop = container.scrollHeight - prevScrollHeight;
+          }
+        }, 0);
+      } else {
+        setHasMoreMsgs(false);
+      }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setIsLoadingOlder(false);
+    }
+  };
+
+  const handleChatScroll = (e) => {
+    if (e.target.scrollTop <= 0 && hasMoreMsgs && !isLoadingOlder) {
+      loadOlderMessages();
+    }
+  };
+
   const handleRefreshMessages = async () => {
     if (!currentChat) return;
     try {
       setIsRefreshing(true);
-      const res = await axios.get("/api/messages/" + currentChat._id);
-      setMessages(res.data);
+      const res = await axios.get("/api/messages/" + currentChat._id + "?page=1&limit=20");
+      setMessages(res.data.reverse());
+      setMsgPage(1);
+      setHasMoreMsgs(res.data.length === 20);
     } catch (err) {
       console.log(err);
     } finally {
@@ -389,8 +442,12 @@ export default function Messenger() {
   };
 
   useEffect(() => {
-    scrollRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+    if (isInitialLoad) {
+      scrollRef.current?.scrollIntoView({ behavior: "auto" });
+    } else if (!isLoadingOlder) {
+      scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages, isInitialLoad, isLoadingOlder]);
 
   return (
     <>
@@ -486,7 +543,8 @@ export default function Messenger() {
                       <span className="chatRefreshText">New Messages</span>
                     </div>
                   </div>
-                  <div className="chatBoxTop">
+                  <div className="chatBoxTop" ref={chatBoxTopRef} onScroll={handleChatScroll}>
+                    {isLoadingOlder && <div className="chatLoadingOlder">過去のメッセージを読み込み中...</div>}
                     {messages.map((m) => (
                       <div ref={scrollRef} key={m._id}>
                         <Message

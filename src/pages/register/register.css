@@ -10,9 +10,9 @@
 
 .loginWrapper {
   width: 70%;
-  height: 70%;
-  border-radius: 8px;
   display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .loginLeft,
@@ -23,19 +23,18 @@
   justify-content: center;
 }
 
-.loginLogo {
-  font-size: 300px;
-  font-weight: 800;
-  color: orange;
-  margin-bottom: 10px;
-  font-style: Helvetica;
+.loginLogoImg {
+  height: 250px;
+  width: auto;
+  margin-bottom: 20px;
+  object-fit: contain;
 }
 
 .loginDesc {
   font-size: 24px;
   color: white;
 }
-  
+
 .loginBox {
   height: 300px;
   padding: 20px;

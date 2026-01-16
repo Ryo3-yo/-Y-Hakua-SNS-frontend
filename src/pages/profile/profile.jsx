@@ -80,6 +80,7 @@ export default function Profile() {
             <div className="profileInfo">
               <div className="profileNameWrapper">
                 <h4 className="profileInfoName">{user.username}</h4>
+                <span className="profileInfoDesc">{user.desc}</span>
                 {user.username !== currentUser.username && (
                   <button
                     className={`followButton ${isFollowed ? "followed" : ""}`}
@@ -88,7 +89,7 @@ export default function Profile() {
                     {isFollowed ? "Unfollow" : "Follow"}
                   </button>
                 )}
-                <span className="profileInfoDesc">{user.desc}</span>
+
               </div>
             </div>
           </div>

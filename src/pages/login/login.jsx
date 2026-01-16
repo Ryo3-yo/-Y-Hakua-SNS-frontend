@@ -109,19 +109,18 @@ import { Button, Container, Typography } from '@mui/material';
 
 export default function Login() {
   const navigate = useNavigate();
+  const PUBLIC_FOLDER = process.env.REACT_APP_PUBLIC_FOLDER || "/assets/";
 
   const handleGoogleLogin = () => {
     // バックエンドのGoogle OAuth認証URLにリダイレクト
-    window.location.href = `${process.env.REACT_APP_API_URL}/auth/google`;
+    window.location.href = `${process.env.REACT_APP_API_URL || "http://localhost:8800"}/api/auth/google`;
   };
 
   return (
     <div className='login'>
       <div className="loginWrapper">
         <div className="loginLeft">
-          <h3 className="loginLogo">
-            Y
-          </h3>
+          <img src={PUBLIC_FOLDER + "logo.png"} alt="Logo" className="loginLogoImg" />
           <span className="loginDesc">
             学校専用のSNSで友達と繋がろう！
           </span>

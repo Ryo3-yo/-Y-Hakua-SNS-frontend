@@ -11,21 +11,59 @@ export default function Timeline({ username }) {
   const [announcements, setAnnouncements] = useState([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
-  const { user } = useContext(AuthContext)
+  const { user } = useContext(AuthContext);
 
-  const fetchPosts = async () => {
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+
+  const fetchPosts = async (pageNum = 1, isRefresh = false) => {
     try {
-      setIsRefreshing(true);
+      if (pageNum === 1) setIsRefreshing(true);
+      else setIsLoadingMore(true);
+
       const response = username
-        ? await axios.get(`/api/posts/profile/${username}`)
-        : await axios.get("/api/posts/timeline/all");
-      setPosts(response.data);
+        ? await axios.get(`/api/posts/profile/${username}?page=${pageNum}&limit=10`)
+        : await axios.get(`/api/posts/timeline/all?page=${pageNum}&limit=10`);
+
+      const newPosts = response.data;
+
+      if (isRefresh || pageNum === 1) {
+        setPosts(newPosts);
+        setPage(1);
+        setHasMore(newPosts.length === 10);
+      } else {
+        setPosts((prev) => [...prev, ...newPosts]);
+        setHasMore(newPosts.length === 10);
+      }
     } catch (err) {
       console.log(err);
     } finally {
-      setTimeout(() => setIsRefreshing(false), 500);
+      if (pageNum === 1) setTimeout(() => setIsRefreshing(false), 500);
+      else setIsLoadingMore(false);
     }
   }
+
+  // Handle scroll for infinite loading
+  useEffect(() => {
+    const handleScroll = () => {
+      if (
+        window.innerHeight + document.documentElement.scrollTop + 100 >=
+        document.documentElement.offsetHeight
+      ) {
+        if (hasMore && !isLoadingMore && !isRefreshing) {
+          setPage((prev) => {
+            const nextPage = prev + 1;
+            fetchPosts(nextPage);
+            return nextPage;
+          });
+        }
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [hasMore, isLoadingMore, isRefreshing, username]);
 
   const handleClassroomSync = async (isAuto = false) => {
     try {
@@ -82,7 +120,7 @@ export default function Timeline({ username }) {
   }, [username, user?._id]);
 
   const handleRefresh = () => {
-    fetchPosts();
+    fetchPosts(1, true);
     if (!username) {
       handleClassroomSync(true);
     }
@@ -140,8 +178,10 @@ export default function Timeline({ username }) {
 
         {user && (!username || username === user.username) && <Share className="Share" />}
         {displayPosts.map((post) => (
-          <Post post={post} key={post._id} />
+          <Post post={post} key={post.isClassroom ? post._id : (post._id + post.createdAt)} />
         ))}
+        {isLoadingMore && <div className="loadingMore">読み込み中...</div>}
+        {!hasMore && posts.length > 0 && <div className="noMorePosts">これ以上の投稿はありません。</div>}
       </div>
     </div>
   )
