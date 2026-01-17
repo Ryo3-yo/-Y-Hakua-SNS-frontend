@@ -6,7 +6,7 @@ import Rightbar from "../../components/rightbar/rightbar";
 import Bottombar from "../../components/bottombar/bottombar";
 import Post from "../../components/post/post";
 import './search_result.css'
-// import { CommentBankSharp } from "@mui/icons-material";
+import axios from "axios";
 
 function SearchResults() {
   const [users, setUsers] = useState([]);
@@ -20,8 +20,6 @@ function SearchResults() {
   };
   const [currentQuery, setCurrentQuery] = useState(getQueryParam("q"));
 
-  // const escapeRegex = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-
   //→ ここで /api/users/search と /api/posts/search を叩く
   const handleSearch = async (query) => {
     const q = (query || "").toString().trim();
@@ -33,26 +31,24 @@ function SearchResults() {
     }
     setLoading(true);
     try {
-      const userReq = fetch(`/api/users/search?q=${encodeURIComponent(q)}`);
-      const postReq = fetch(`/api/posts/search?q=${encodeURIComponent(q)}`);
-      const [userRes, postRes] = await Promise.all([userReq, postReq]);
-
-      if (userRes.ok) setUsers(await userRes.json());
-      else {
-        console.error("users API error:", userRes.status, await userRes.text());
-        setUsers([]);
-      }
-
-      if (postRes.ok) {
-        const data = await postRes.json();
-        setPosts(Array.isArray(data) ? data : []);
-        console.log(posts);
+      if (q.startsWith("#")) {
+        // ハッシュタグ検索の場合
+        const tag = q.substring(1);
+        const res = await axios.get(`/api/hashtags/search/${encodeURIComponent(tag)}`);
+        setPosts(res.data || []);
+        setUsers([]); // ハッシュタグ検索時はユーザーは検索しない
       } else {
-        console.error("posts API error:", postRes.status, await postRes.text());
-        setPosts([]);
+        // 通常のテキスト検索
+        const [userRes, postRes] = await Promise.all([
+          axios.get(`/api/users/search?q=${encodeURIComponent(q)}`),
+          axios.get(`/api/posts/search?q=${encodeURIComponent(q)}`)
+        ]);
+        
+        setUsers(userRes.data || []);
+        setPosts(postRes.data || []);
       }
     } catch (err) {
-      console.error("search fetch error:", err);
+      console.error("search error:", err);
       setUsers([]);
       setPosts([]);
     } finally {
