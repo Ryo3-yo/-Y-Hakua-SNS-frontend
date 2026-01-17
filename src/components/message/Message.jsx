@@ -1,6 +1,6 @@
 import "./message.css";
 import { format } from "timeago.js";
-import { MoreVert, Edit, Delete, DoneAll, Done } from "@mui/icons-material";
+import { Edit, Delete, DoneAll, Done } from "@mui/icons-material";
 import { useState } from "react";
 import axios from "axios";
 

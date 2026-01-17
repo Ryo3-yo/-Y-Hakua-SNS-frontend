@@ -7,7 +7,7 @@ import ChatHeader from "../../components/chatHeader/ChatHeader";
 import Bottombar from "../../components/bottombar/bottombar";
 import { Refresh, AttachFile, Cancel, ArrowBack } from "@mui/icons-material";
 
-import { useContext, useEffect, useState, useRef } from "react";
+import { useContext, useEffect, useState, useRef, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import { AuthContext } from "../../state/AuthContext";
 import axios from "axios";
@@ -84,7 +84,7 @@ export default function Messenger() {
   // マウント時に未読カウントを最新化（Messengerを開いたタイミングで整合性を取る）
   useEffect(() => {
     refreshUnreadMessages();
-  }, [user]);
+  }, [user, refreshUnreadMessages]);
 
   // Socket.io イベント設定
   useEffect(() => {
@@ -137,6 +137,28 @@ export default function Messenger() {
     // 本来は .off するべき
   }, [socket, currentChat, user]); // socketとcurrentChatに依存
 
+  // 会話リストの並び替え・更新
+  const updateConversationList = useCallback((message) => {
+    setConversations(prev => {
+      const targetIndex = prev.findIndex(c => c._id === message.conversationId);
+      if (targetIndex === -1) return prev;
+
+      const updatedConv = { ...prev[targetIndex] };
+      updatedConv.lastMessageText = message.text;
+      updatedConv.lastMessageAt = message.createdAt;
+
+      // 開いていないチャットなら未読カウントを増やす
+      if (currentChat?._id !== message.conversationId && message.sender !== user._id) {
+        updatedConv.myUnreadCount = (updatedConv.myUnreadCount || 0) + 1;
+      }
+
+      // 更新した会話を先頭に移動
+      const newConvs = [...prev];
+      newConvs.splice(targetIndex, 1);
+      return [updatedConv, ...newConvs];
+    });
+  }, [currentChat, user._id]);
+
   // メッセージ受信時の処理
   useEffect(() => {
     if (arrivalMessage) {
@@ -168,29 +190,7 @@ export default function Messenger() {
       // 会話リストを更新（最新のメッセージを表示するため）
       updateConversationList(arrivalMessage);
     }
-  }, [arrivalMessage, currentChat, socket, user._id, refreshUnreadMessages]); // socket追加
-
-  // 会話リストの並び替え・更新
-  const updateConversationList = (message) => {
-    setConversations(prev => {
-      const targetIndex = prev.findIndex(c => c._id === message.conversationId);
-      if (targetIndex === -1) return prev;
-
-      const updatedConv = { ...prev[targetIndex] };
-      updatedConv.lastMessageText = message.text;
-      updatedConv.lastMessageAt = message.createdAt;
-
-      // 開いていないチャットなら未読カウントを増やす
-      if (currentChat?._id !== message.conversationId && message.sender !== user._id) {
-        updatedConv.myUnreadCount = (updatedConv.myUnreadCount || 0) + 1;
-      }
-
-      // 更新した会話を先頭に移動
-      const newConvs = [...prev];
-      newConvs.splice(targetIndex, 1);
-      return [updatedConv, ...newConvs];
-    });
-  };
+  }, [arrivalMessage, currentChat, socket, user._id, refreshUnreadMessages, updateConversationList]); // socket追加
 
   useEffect(() => {
     if (!user?._id) return;
@@ -247,7 +247,7 @@ export default function Messenger() {
       }
     };
     getMessages();
-  }, [currentChat]);
+  }, [currentChat, user._id, refreshUnreadMessages]);
 
   const loadOlderMessages = async () => {
     if (!hasMoreMsgs || isLoadingOlder || !currentChat) return;

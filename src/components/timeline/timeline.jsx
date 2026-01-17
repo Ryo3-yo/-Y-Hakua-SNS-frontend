@@ -13,7 +13,7 @@ export default function Timeline({ username }) {
   const [isSyncing, setIsSyncing] = useState(false);
   const { user } = useContext(AuthContext);
 
-  const [page, setPage] = useState(1);
+  const [, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 

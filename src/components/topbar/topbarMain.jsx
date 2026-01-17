@@ -7,7 +7,7 @@ import { SocketContext } from '../../state/SocketContext';
 
 export default function Topbar({ onSearch, initialValue = '' }) {
     const { user } = useContext(AuthContext);
-    const { unreadMessages, unreadNotifications, resetUnreadNotifications } = useContext(SocketContext);
+    const { unreadMessages, unreadNotifications } = useContext(SocketContext);
     const PUBLIC_FOLDER = process.env.REACT_APP_PUBLIC_FOLDER || "/assets/";
 
     const [query, setQuery] = useState('');

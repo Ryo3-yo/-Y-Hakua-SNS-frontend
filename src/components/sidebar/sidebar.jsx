@@ -1,7 +1,7 @@
 import { Home, Notifications, MessageRounded, Person, Settings, MoreVert, TrendingUp } from '@mui/icons-material'
 import React, { useContext, useState, useRef, useEffect } from 'react'
 import './sidebar.css'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { AuthContext } from '../../state/AuthContext';
 import axios from 'axios';
 
@@ -9,7 +9,6 @@ export default function Sidebar() {
     const PUBLIC_FOLDER = process.env.REACT_APP_PUBLIC_FOLDER || "/assets/";
     const { user, dispatch } = useContext(AuthContext);
     const [showMenu, setShowMenu] = useState(false);
-    const navigate = useNavigate();
     const menuRef = useRef(null);
 
     const handleLogout = async () => {

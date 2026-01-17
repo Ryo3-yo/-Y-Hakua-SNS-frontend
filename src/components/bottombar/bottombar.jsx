@@ -1,6 +1,6 @@
-import { Home, Notifications, MessageRounded, Bookmark, Person, Settings, MoreVert } from '@mui/icons-material'
-import React, { useContext, useState, useRef, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Home, Notifications, MessageRounded, Person, Settings } from '@mui/icons-material'
+import React, { useContext } from 'react'
+import { Link } from 'react-router-dom'
 import { AuthContext } from '../../state/AuthContext';
 import './bottombar.css'
 

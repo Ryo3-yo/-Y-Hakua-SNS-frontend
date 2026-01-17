@@ -1,9 +1,7 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './rightbar.css';
 import axios from 'axios';
-import { AuthContext } from '../../state/AuthContext';
-import { UpdateSuccess } from '../../state/AuthActions';
 
 export default function Rightbar({ user }) {
   const PUBLIC_FOLDER = process.env.REACT_APP_PUBLIC_FOLDER || "/assets/";
@@ -80,7 +78,7 @@ export default function Rightbar({ user }) {
         }
       };
       getFriends();
-    }, [user]);
+    }, []);
 
     return (
       <>

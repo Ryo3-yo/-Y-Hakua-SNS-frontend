@@ -32,7 +32,6 @@ export default function Post({ post }) {
 
         return parts.map((part, index) => {
             if (part.match(regex)) {
-                const tag = part.substring(1); // Remove the # symbol
                 return (
                     <span
                         key={index}
