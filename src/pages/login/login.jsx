@@ -108,6 +108,11 @@ export default function Login() {
   const PUBLIC_FOLDER = process.env.REACT_APP_PUBLIC_FOLDER || "/assets/";
 
   const handleGoogleLogin = () => {
+    // Note: Google blocks OAuth requests from some WebViews for security reasons.
+    // If you are wrapping this app in a native app, use Custom Tabs (Android) 
+    // or SFSafariViewController (iOS) instead of a WebView.
+    // https://developers.googleblog.com/2016/08/modernizing-oauth-interactions-in-native-apps.html
+
     // バックエンドのGoogle OAuth認証URLにリダイレクト
     window.location.href = `${process.env.REACT_APP_API_URL || "http://localhost:8800"}/api/auth/google`;
   };
