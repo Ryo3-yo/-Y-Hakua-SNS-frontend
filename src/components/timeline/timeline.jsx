@@ -80,8 +80,8 @@ export default function Timeline({ username }) {
 
       // アナウンスメントをPostコンポーネントが扱える形式に変換
       const formattedAnnouncements = res.data.map(item => ({
-        _id: item.id,
-        desc: `[Classroom: ${item.courseName}] ${item.text || "No content"}`,
+        _id: item.id || item._id,
+        desc: `${item.displayTitle}\n[Course: ${item.courseName}]\n\n${item.displayText || "No content"}`,
         img: null,
         createdAt: item.updateTime,
         userId: {
@@ -92,7 +92,8 @@ export default function Timeline({ username }) {
         likes: [],
         comment: 0,
         isClassroom: true,
-        courseLink: item.courseLink
+        courseLink: item.alternateLink || item.courseLink,
+        materials: item.materials || [] // マテリアルを追加
       }));
 
       setAnnouncements(formattedAnnouncements);

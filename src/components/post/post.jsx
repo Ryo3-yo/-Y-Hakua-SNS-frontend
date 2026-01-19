@@ -208,6 +208,57 @@ export default function Post({ post }) {
                     <span className="postText">
                         {renderTextWithHashtags(post.desc)}
                     </span>
+                    {post.isClassroom && post.materials && post.materials.length > 0 && (
+                        <div className="classroomMaterials">
+                            {post.materials.map((material, idx) => {
+                                if (material.driveFile) {
+                                    return (
+                                        <a key={idx} href={material.driveFile.alternateLink} target="_blank" rel="noopener noreferrer" className="materialItem">
+                                            <div className="materialIcon">📄</div>
+                                            <div className="materialInfo">
+                                                <div className="materialTitle">{material.driveFile.title}</div>
+                                                <div className="materialType">Google Drive File</div>
+                                            </div>
+                                        </a>
+                                    );
+                                }
+                                if (material.youtubeVideo) {
+                                    return (
+                                        <a key={idx} href={material.youtubeVideo.alternateLink} target="_blank" rel="noopener noreferrer" className="materialItem">
+                                            <div className="materialIcon">📺</div>
+                                            <div className="materialInfo">
+                                                <div className="materialTitle">{material.youtubeVideo.title}</div>
+                                                <div className="materialType">YouTube Video</div>
+                                            </div>
+                                        </a>
+                                    );
+                                }
+                                if (material.link) {
+                                    return (
+                                        <a key={idx} href={material.link.url} target="_blank" rel="noopener noreferrer" className="materialItem">
+                                            <div className="materialIcon">🔗</div>
+                                            <div className="materialInfo">
+                                                <div className="materialTitle">{material.link.title || material.link.url}</div>
+                                                <div className="materialType">Link</div>
+                                            </div>
+                                        </a>
+                                    );
+                                }
+                                if (material.form) {
+                                    return (
+                                        <a key={idx} href={material.form.formUrl} target="_blank" rel="noopener noreferrer" className="materialItem">
+                                            <div className="materialIcon">📝</div>
+                                            <div className="materialInfo">
+                                                <div className="materialTitle">{material.form.title}</div>
+                                                <div className="materialType">Google Form</div>
+                                            </div>
+                                        </a>
+                                    );
+                                }
+                                return null;
+                            })}
+                        </div>
+                    )}
                     {post.img && (
                         <img
                             src={
