@@ -98,13 +98,14 @@ export default function Timeline({ username }) {
 
       setAnnouncements(formattedAnnouncements);
     } catch (err) {
-      console.error("Classroom sync error:", err);
+      console.error("Classroom sync error full object:", err);
       // 自動同期の場合はアラートを出さない
       if (!isAuto) {
+        const errorMsg = err.response?.data?.message || err.message || "Unknown error";
         if (err.response && err.response.status === 401) {
-          alert("Google認証の有効期限が切れている可能性があります。再ログインしてください。");
+          alert(`Google認証の有効期限が切れている可能性があります。再ログインしてください。\n(${errorMsg})`);
         } else {
-          alert("Classroomデータの取得に失敗しました。");
+          alert(`Classroomデータの取得に失敗しました。\n理由: ${errorMsg}`);
         }
       }
     } finally {
@@ -127,22 +128,12 @@ export default function Timeline({ username }) {
     }
   };
 
-  // 投稿とアナウンスメントをマージ（4投稿に1回アナウンスメント）
+  // 投稿とアナウンスメントを日付順にマージしてソート
   const getCombinedPosts = () => {
-    if (announcements.length === 0) return posts;
-
-    let combined = [...posts];
-    let announceIdx = 0;
-
-    // 4投稿ごとに挿入 (index: 4, 9, 14...)
-    for (let i = 4; i < combined.length + announcements.length; i += 5) {
-      if (announceIdx < announcements.length) {
-        combined.splice(i, 0, announcements[announceIdx]);
-        announceIdx++;
-      } else {
-        break;
-      }
-    }
+    // 全てを一つの配列にまとめ、日付の降順（新しい順）でソート
+    const combined = [...posts, ...announcements].sort((a, b) => {
+      return new Date(b.createdAt) - new Date(a.createdAt);
+    });
 
     return combined;
   };
